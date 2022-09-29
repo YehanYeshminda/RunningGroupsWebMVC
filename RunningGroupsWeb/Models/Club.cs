@@ -15,7 +15,7 @@ namespace RunningGroupsWeb.Models
         [ForeignKey("Address")] // foreign key which means take the primary key from the address and then take the primary key
         public int AddressId { get; set; }
 
-        public Address Address { get; set; } // we pass in the whole address object
+        public Address Address { get; set; } // this is a 1 to many relationship  = 1 club can have many addresses
 
         public ClubCatergory ClubCatergory { get; set; }
 

@@ -15,7 +15,7 @@ namespace RunningGroupsWeb.Models
         [ForeignKey("Address")]
         public int AddressId { get; set; }
 
-        public Address Address { get; set; }
+        public Address Address { get; set; } // this is a one to many relationship = 1 address can have many races
         public RaceCatergory RaceCatergory { get; set; }
 
         [ForeignKey("AppUser")]
