@@ -66,5 +66,73 @@ namespace RunningGroupsWeb.Controllers
             return View(createClubViewModel);
 
         }
+
+
+        // edit data get
+        public async Task<IActionResult> Edit(int id)
+        {
+            var club = await _clubInterface.GetByIdAsync(id);
+
+            if (club == null) return View("Error");
+
+            var clubVm = new EditClubViewModel
+            {
+                Title = club.Title,
+                Description = club.Description,
+                AddressId = club.AddressId,
+                Address = club.Address,
+                URL = club.Image,
+                ClubCatergory = club.ClubCatergory
+            };
+
+            return View(clubVm);
+        }
+
+        [HttpPost] // edit post
+        public async Task<IActionResult> Edit(int id, EditClubViewModel editClubViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Failed to edit club");
+                return View("Edit", editClubViewModel);
+            }
+
+            var clubModel = await _clubInterface.GetByIdAsyncNoTracking(id);
+
+            if (clubModel != null)
+            {
+                try
+                {
+                    await _cloudinaryInterface.DeletePhotoAsync(clubModel.Image);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Unable to delete photo!");
+                    return View(editClubViewModel);
+                }
+
+                var photoResult = await _cloudinaryInterface.AddPhotoAsync(editClubViewModel.Image);
+
+                var club = new Club
+                {
+                    Id = id,
+                    Title = editClubViewModel.Title,
+                    Description = editClubViewModel.Description,
+                    Image = photoResult.Url.ToString(),
+                    AddressId = editClubViewModel.AddressId,
+                    Address = editClubViewModel.Address,
+                };
+
+                _clubInterface.Update(club);
+
+                return RedirectToAction("Index");
+
+
+            }
+            else
+            {
+                return View(editClubViewModel);
+            }
+        }
     }
 }

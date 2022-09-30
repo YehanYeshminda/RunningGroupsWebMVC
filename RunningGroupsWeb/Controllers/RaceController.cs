@@ -68,5 +68,70 @@ namespace RunningGroupsWeb.Controllers
             return View(createRaceViewModel);
 
         }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var race = await _raceInterface.GetByIdAsync(id);
+
+            if (race == null) return View("Error");
+
+            var raceVm = new EditRaceViewModel
+            {
+                Title = race.Title,
+                Description = race.Description,
+                AddressId = race.AddressId,
+                Address = race.Address,
+                RaceCatergory = race.RaceCatergory,
+            };
+
+            return View(raceVm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, EditRaceViewModel editRaceViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Unable to edit race");
+                return View("Edit", editRaceViewModel);
+            }
+
+            var raceModel = await _raceInterface.GetByIdAsyncNoTracking(id);
+
+            if (raceModel != null)
+            {
+                try
+                {
+                    await _cloudinaryInterface.DeletePhotoAsync(raceModel.Image);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Unable to delete photo");
+                    return View(editRaceViewModel);
+                }
+
+                var photoResult = await _cloudinaryInterface.AddPhotoAsync(editRaceViewModel.Image);
+
+                var race = new Race
+                {
+                    Id = id,
+                    Title = editRaceViewModel.Title,
+                    Description = editRaceViewModel.Description,
+                    Image = photoResult.Url.ToString(),
+                    AddressId = editRaceViewModel.AddressId,
+                    Address = editRaceViewModel.Address
+                };
+
+                _raceInterface.Update(race);
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(editRaceViewModel);
+            }
+
+        }
+
     }
 }

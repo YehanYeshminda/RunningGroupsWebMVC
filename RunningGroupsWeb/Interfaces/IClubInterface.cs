@@ -15,6 +15,7 @@ namespace RunningGroupsWeb.Interfaces
         Task<IEnumerable<Club>> GetAllClubs();
 
         Task<Club> GetByIdAsync(int id);
+        Task<Club> GetByIdAsyncNoTracking(int id);
 
         Task<IEnumerable<Club>> GetClubByCity(string city);
     }

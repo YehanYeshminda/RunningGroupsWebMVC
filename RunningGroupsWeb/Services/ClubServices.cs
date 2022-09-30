@@ -53,6 +53,13 @@ namespace RunningGroupsWeb.Services
             return singleClub;
         }
 
+        // if we get a tracking error then we do this
+        public async Task<Club> GetByIdAsyncNoTracking(int id)
+        {
+            var singleClub = await _context.Clubs.Include(e => e.Address).AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+            return singleClub;
+        }
+
         // search for a city with a string provided
         public async Task<IEnumerable<Club>> GetClubByCity(string city)
         {

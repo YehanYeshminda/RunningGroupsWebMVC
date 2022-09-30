@@ -44,6 +44,12 @@ namespace RunningGroupsWeb.Services
             return singleRace;
         }
 
+        public async Task<Race> GetByIdAsyncNoTracking(int id)
+        {
+            var singleRace = await _context.Races.Include(e => e.Address).AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+            return singleRace;
+        }
+
         public bool Update(Race race)
         {
             _context.Update(race);
