@@ -4,7 +4,7 @@ namespace RunningGroupsWeb.Interfaces
 {
     public interface IClubInterface
     {
-        bool Add(Club club);
+        bool Add(Club club); // used to insert values
 
         bool Delete(Club club);
 

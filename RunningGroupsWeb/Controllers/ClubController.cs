@@ -27,5 +27,22 @@ namespace RunningGroupsWeb.Controllers
             var clubDetails = await _clubInterface.GetByIdAsync(id);
             return View(clubDetails);
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Club club)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(club);
+            }
+
+            _clubInterface.Add(club);
+            return RedirectToAction("Index");
+        }
     }
 }

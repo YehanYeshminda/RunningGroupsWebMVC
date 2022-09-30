@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RunningGroupsWeb.Data;
 using RunningGroupsWeb.Interfaces;
+using RunningGroupsWeb.Models;
 
 namespace RunningGroupsWeb.Controllers
 {
@@ -25,6 +26,24 @@ namespace RunningGroupsWeb.Controllers
             // we only need the include if we have a object inside of the data
             var raceDetails = await _raceInterface.GetByIdAsync(id);
             return View(raceDetails);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Race race)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(race);
+            }
+
+            _raceInterface.Add(race);
+            return RedirectToAction("Index");
         }
     }
 }
