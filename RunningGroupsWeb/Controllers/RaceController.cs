@@ -1,28 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RunningGroupsWeb.Data;
+using RunningGroupsWeb.Interfaces;
 
 namespace RunningGroupsWeb.Controllers
 {
     public class RaceController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRaceInterface _raceInterface;
 
-        public RaceController(ApplicationDbContext context)
+        public RaceController(IRaceInterface raceInterface)
         {
-            _context = context;
+            _raceInterface = raceInterface;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var races = _context.Races.ToList();
+            var races = await _raceInterface.GetAllRaces();
             return View(races);
         }
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
             // we only need the include if we have a object inside of the data
-            var raceDetails = _context.Races.Include(a => a.Address).FirstOrDefault(c => c.Id == id);
+            var raceDetails = await _raceInterface.GetByIdAsync(id);
             return View(raceDetails);
         }
     }

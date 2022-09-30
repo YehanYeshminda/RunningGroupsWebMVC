@@ -1,10 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using RunningGroupsWeb.Data;
+using RunningGroupsWeb.Interfaces;
+using RunningGroupsWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// adding the interfaces and the services
+builder.Services.AddScoped<IClubInterface, ClubServices>();
+builder.Services.AddScoped<IRaceInterface, RaceServices>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
