@@ -1,5 +1,6 @@
 ﻿@using RunningGroupsWeb.Data.Enums
-@model Race
+@using RunningGroupsWeb.ViewModel
+@model CreateRaceViewModel
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -8,7 +9,7 @@
 }
 
 
-<form method="post" asp-action="Create">
+<form method="post" asp-action="Create" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Title"></label>
         <input asp-for="Title" type="text" class="form-control" placeholder="Enter title">
@@ -21,14 +22,6 @@
         <label asp-for="Description"></label>
         <input asp-for="Description" type="text" class="form-control" placeholder="Enter description">
         <span asp-validation-for="Description" class="text-danger"></span>  
-    </div>
-    
-    <br />
-    
-    <div class="form-group">
-        <label asp-for="Image"></label>
-        <input asp-for="Image" type="text" class="form-control" placeholder="Enter Image">
-        <span asp-validation-for="Image" class="text-danger"></span>  
     </div>
     
     <br />
@@ -62,7 +55,15 @@
     <div class="form-group">
         <label asp-for="Address.State">State</label>
         <input asp-for="Address.State" type="text" class="form-control" placeholder="Enter state">
-        <span asp-validation-for="Address.State" class="text-danger"></span>  
+        <span asp-validation-for="Address.State" class="text-danger"></span>
+    </div>
+
+     <br />
+    
+    <div class="form-group">
+        <label asp-for="Image"></label>
+        <input asp-for="Image" type="file" class="form-control" placeholder="Enter Image">
+        <span asp-validation-for="Image" class="text-danger"></span>  
     </div>
     
     <br />

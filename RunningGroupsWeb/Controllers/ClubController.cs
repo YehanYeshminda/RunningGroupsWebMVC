@@ -3,16 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using RunningGroupsWeb.Data;
 using RunningGroupsWeb.Interfaces;
 using RunningGroupsWeb.Models;
+using RunningGroupsWeb.ViewModel;
 
 namespace RunningGroupsWeb.Controllers
 {
     public class ClubController : Controller
     {
         private readonly IClubInterface _clubInterface;
+        private readonly ICloudinaryInterface _cloudinaryInterface;
 
-        public ClubController(IClubInterface clubInterface)
+        public ClubController(IClubInterface clubInterface, ICloudinaryInterface cloudinaryInterface)
         {
             _clubInterface = clubInterface;
+            _cloudinaryInterface = cloudinaryInterface;
         }
 
         public async Task<IActionResult> Index()
@@ -34,15 +37,34 @@ namespace RunningGroupsWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Club club)
+        public async Task<IActionResult> Create(CreateClubViewModel createClubViewModel)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(club);
+                var result = await _cloudinaryInterface.AddPhotoAsync(createClubViewModel.Image);
+
+                var club = new Club
+                {
+                    Title = createClubViewModel.Title,
+                    Description = createClubViewModel.Description,
+                    Image = result.Url.ToString(),
+                    Address = new Address
+                    {
+                        City = createClubViewModel.Address.City,
+                        Street = createClubViewModel.Address.Street,
+                        State = createClubViewModel.Address.State
+                    }
+                };
+                _clubInterface.Add(club);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Photo Upload Failed!");
             }
 
-            _clubInterface.Add(club);
-            return RedirectToAction("Index");
+            return View(createClubViewModel);
+
         }
     }
 }

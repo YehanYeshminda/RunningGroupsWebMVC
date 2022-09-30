@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RunningGroupsWeb.Data;
+using RunningGroupsWeb.Helpers;
 using RunningGroupsWeb.Interfaces;
 using RunningGroupsWeb.Services;
 
@@ -11,6 +12,8 @@ builder.Services.AddControllersWithViews();
 // adding the interfaces and the services
 builder.Services.AddScoped<IClubInterface, ClubServices>();
 builder.Services.AddScoped<IRaceInterface, RaceServices>();
+builder.Services.AddScoped<ICloudinaryInterface, CloudinaryServices>();
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

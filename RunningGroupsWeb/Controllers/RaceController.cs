@@ -3,16 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using RunningGroupsWeb.Data;
 using RunningGroupsWeb.Interfaces;
 using RunningGroupsWeb.Models;
+using RunningGroupsWeb.ViewModel;
 
 namespace RunningGroupsWeb.Controllers
 {
     public class RaceController : Controller
     {
         private readonly IRaceInterface _raceInterface;
+        private readonly ICloudinaryInterface _cloudinaryInterface;
 
-        public RaceController(IRaceInterface raceInterface)
+        public RaceController(IRaceInterface raceInterface, ICloudinaryInterface cloudinaryInterface)
         {
             _raceInterface = raceInterface;
+            _cloudinaryInterface = cloudinaryInterface;
         }
 
         public async Task<IActionResult> Index()
@@ -35,15 +38,35 @@ namespace RunningGroupsWeb.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(Race race)
+        public async Task<IActionResult> Create(CreateRaceViewModel createRaceViewModel)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(race);
+                var result = await _cloudinaryInterface.AddPhotoAsync(createRaceViewModel.Image);
+
+                var race = new Race
+                {
+                    Title = createRaceViewModel.Title,
+                    Description = createRaceViewModel.Description,
+                    Image = result.Url.ToString(),
+                    Address = new Address
+                    {
+                        City = createRaceViewModel.Address.City,
+                        Street = createRaceViewModel.Address.Street,
+                        State = createRaceViewModel.Address.State,
+                    }
+                };
+
+                _raceInterface.Add(race);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Unable to upload Image!");
             }
 
-            _raceInterface.Add(race);
-            return RedirectToAction("Index");
+            return View(createRaceViewModel);
+
         }
     }
 }
