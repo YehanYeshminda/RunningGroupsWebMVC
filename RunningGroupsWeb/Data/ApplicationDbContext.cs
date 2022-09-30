@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RunningGroupsWeb.Models;
 
 namespace RunningGroupsWeb.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
         // contructor
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
