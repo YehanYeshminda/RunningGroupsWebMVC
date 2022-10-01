@@ -45,7 +45,7 @@ namespace RunningGroupsWeb.Controllers
                     if (result.Succeeded)
                     {
                         // if the password and the email is correct
-                        return RedirectToAction("Index", "Race");
+                        return RedirectToAction("Index", "Home");
                     }
                 }
 
@@ -56,6 +56,47 @@ namespace RunningGroupsWeb.Controllers
             // user not found
             TempData["Error"] = "Wrong credentials! Try Again!";
             return View(loginViewModel);
+        }
+
+        public IActionResult Register()
+        {
+            var responce = new RegisterViewModel();
+            return View(responce);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+        {
+            if (!ModelState.IsValid) return View(registerViewModel);
+
+            var user = await _userManager.FindByEmailAsync(registerViewModel.EmailAddress);
+
+            if (user != null)
+            {
+                TempData["Error"] = "This email is already in use!";
+                return View(registerViewModel);
+            }
+
+            var newUserEmail = new AppUser()
+            {
+                Email = registerViewModel.EmailAddress,
+                UserName = registerViewModel.EmailAddress
+            };
+
+            var newUserResponce = await _userManager.CreateAsync(newUserEmail, registerViewModel.Password);
+
+            if (newUserResponce.Succeeded)
+                await _userManager.AddToRoleAsync(newUserEmail, UserRoles.User);
+
+            return RedirectToAction("Login", "Account");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
         }
     }
 }
