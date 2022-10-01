@@ -42,6 +42,7 @@ namespace RunningGroupsWeb.Controllers
                 {
                     // password is correct
                     var result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
+
                     if (result.Succeeded)
                     {
                         // if the password and the email is correct
@@ -86,7 +87,9 @@ namespace RunningGroupsWeb.Controllers
             var newUserResponce = await _userManager.CreateAsync(newUserEmail, registerViewModel.Password);
 
             if (newUserResponce.Succeeded)
+            {
                 await _userManager.AddToRoleAsync(newUserEmail, UserRoles.User);
+            }
 
             return RedirectToAction("Login", "Account");
         }
