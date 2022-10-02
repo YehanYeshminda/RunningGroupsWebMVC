@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RunningGroupsWeb.Data;
 using RunningGroupsWeb.Interfaces;
+using RunningGroupsWeb.ViewModel;
 
 namespace RunningGroupsWeb.Controllers
 {
@@ -19,8 +20,13 @@ namespace RunningGroupsWeb.Controllers
             var userRaces = await _dashboardInterface.GetAllUserRaces();
             var userClubs = await _dashboardInterface.GetAllClubs();
 
+            var userviewModel = new DashboardViewModel()
+            {
+                Races = userRaces,
+                Clubs = userClubs
+            };
 
-            return View();
+            return View(userviewModel);
         }
     }
 }

@@ -11,11 +11,13 @@ namespace RunningGroupsWeb.Controllers
     {
         private readonly IClubInterface _clubInterface;
         private readonly ICloudinaryInterface _cloudinaryInterface;
+        public readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ClubController(IClubInterface clubInterface, ICloudinaryInterface cloudinaryInterface)
+        public ClubController(IClubInterface clubInterface, ICloudinaryInterface cloudinaryInterface, IHttpContextAccessor httpContextAccessor)
         {
             _clubInterface = clubInterface;
             _cloudinaryInterface = cloudinaryInterface;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IActionResult> Index()
@@ -33,7 +35,12 @@ namespace RunningGroupsWeb.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var currentUserId = _httpContextAccessor.HttpContext.User.GetUserId();
+            var clubModel = new CreateClubViewModel
+            {
+                AppUserId = currentUserId
+            };
+            return View(clubModel);
         }
 
         [HttpPost]
@@ -48,6 +55,7 @@ namespace RunningGroupsWeb.Controllers
                     Title = createClubViewModel.Title,
                     Description = createClubViewModel.Description,
                     Image = result.Url.ToString(),
+                    AppUserId = createClubViewModel.AppUserId,
                     Address = new Address
                     {
                         City = createClubViewModel.Address.City,

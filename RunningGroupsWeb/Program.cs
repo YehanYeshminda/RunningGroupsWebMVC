@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using RunningGroupsWeb.Data;
 using RunningGroupsWeb.Helpers;
 using RunningGroupsWeb.Interfaces;
@@ -16,13 +17,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IClubInterface, ClubServices>();
 builder.Services.AddScoped<IRaceInterface, RaceServices>();
 builder.Services.AddScoped<ICloudinaryInterface, CloudinaryServices>();
+builder.Services.AddScoped<IDashboardInterface, DashboardServices>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();

@@ -11,5 +11,6 @@ namespace RunningGroupsWeb.ViewModel
         public Address Address { get; set; }
         public IFormFile Image { get; set; }
         public RaceCatergory RaceCatergory { get; set; }
+        public string AppUserId { get; set; }
     }
 }

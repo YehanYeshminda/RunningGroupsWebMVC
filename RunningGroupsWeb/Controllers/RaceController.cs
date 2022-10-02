@@ -11,11 +11,13 @@ namespace RunningGroupsWeb.Controllers
     {
         private readonly IRaceInterface _raceInterface;
         private readonly ICloudinaryInterface _cloudinaryInterface;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RaceController(IRaceInterface raceInterface, ICloudinaryInterface cloudinaryInterface)
+        public RaceController(IRaceInterface raceInterface, ICloudinaryInterface cloudinaryInterface, IHttpContextAccessor httpContextAccessor)
         {
             _raceInterface = raceInterface;
             _cloudinaryInterface = cloudinaryInterface;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IActionResult> Index()
@@ -33,7 +35,13 @@ namespace RunningGroupsWeb.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var currentUserId = _httpContextAccessor.HttpContext?.User.GetUserId();
+
+            var createViewModel = new CreateRaceViewModel
+            {
+                AppUserId = currentUserId
+            };
+            return View(createViewModel);
         }
 
 
@@ -49,6 +57,7 @@ namespace RunningGroupsWeb.Controllers
                     Title = createRaceViewModel.Title,
                     Description = createRaceViewModel.Description,
                     Image = result.Url.ToString(),
+                    AppUserId = createRaceViewModel.AppUserId,
                     Address = new Address
                     {
                         City = createRaceViewModel.Address.City,

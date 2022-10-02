@@ -10,6 +10,9 @@
 
 
 <form method="post" asp-action="Create" enctype="multipart/form-data">
+    
+     <input type="hidden" id="AppUserId" name="AppUserId" asp-for="AppUserId"  />
+
     <div class="form-group">
         <label asp-for="Title"></label>
         <input asp-for="Title" type="text" class="form-control" placeholder="Enter title">
