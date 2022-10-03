@@ -32,6 +32,7 @@ namespace RunningGroupsWeb.Controllers
             if (!ModelState.IsValid) return View(loginViewModel);
 
             var user = await _userManager.FindByEmailAsync(loginViewModel.EmailAddress);
+            var boolVal = false;
 
             if (user != null)
             {
